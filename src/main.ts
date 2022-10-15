@@ -23,4 +23,10 @@ async function bootstrap() {
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
   await app.listen(3000);
 }
-bootstrap();
+bootstrap()
+  .then((value) => {
+    console.log(value, 'should start access');
+  })
+  .catch((err) => {
+    console.log(err, 'error some error');
+  });

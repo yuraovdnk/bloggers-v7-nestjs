@@ -24,11 +24,9 @@ import { QueryParamsPipe } from '../../pipes/query-params.pipe';
 import { PostsQueryRepository } from './infrastructure/posts.query.repository';
 import { CommentsService } from '../comments/application/comments.service';
 import { CommentsQueryRepository } from '../comments/instrasctucture/query-comments.repostitory';
-import { SetLikeDto } from '../comments/dto/set-like.dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { LikePostCommand } from './application/use-cases/like-post.command';
 import { SkipThrottle } from '@nestjs/throttler';
-import { StatusesLike } from '../../utils/enums';
 import { ParseStatusLikeEnumPipe } from '../../pipes/status-like-enum.pipe';
 
 @SkipThrottle()
