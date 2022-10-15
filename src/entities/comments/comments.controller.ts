@@ -59,6 +59,7 @@ export class CommentsController {
 
   @Put(':commentId/like-status')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   async setLikeStatus(
     @Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId,
     @CurrentUser() userId: mongoose.Types.ObjectId,

@@ -84,6 +84,8 @@ export class CommentsQueryRepository {
           },
         },
       },
+      { $skip: queryParams.skip },
+      { $limit: queryParams.pageSize },
     ]);
     const paginatedItems = paginator<AggregatedCommentType>(comments, queryParams);
     return CommentMapper.mapPaginatedComments(paginatedItems, userId);

@@ -48,7 +48,6 @@ describe('Posts', () => {
       const postById = await request(app.getHttpServer())
         .get(`/posts/` + createdPost.body.id)
         .expect(200);
-      expect(postById.body.)
     });
   });
   describe('fdgfd', () => {

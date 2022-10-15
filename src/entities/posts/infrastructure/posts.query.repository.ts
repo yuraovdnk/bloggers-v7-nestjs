@@ -57,6 +57,8 @@ export class PostsQueryRepository {
           },
         },
       },
+      { $skip: queryParams.skip },
+      { $limit: queryParams.pageSize },
     ]);
     const paginatedItems = paginator<AggregatedPostType>(posts, queryParams);
     return PostsMapper.mapPaginatedPosts(paginatedItems, userId);
@@ -113,6 +115,8 @@ export class PostsQueryRepository {
           },
         },
       },
+      { $skip: queryParams.skip },
+      { $limit: queryParams.pageSize },
     ]);
     const paginatedItems = paginator<AggregatedPostType>(posts, queryParams);
     return PostsMapper.mapPaginatedPosts(paginatedItems, userId);

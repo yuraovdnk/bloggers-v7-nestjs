@@ -1,4 +1,3 @@
-import * as dotenv from 'dotenv';
 import * as cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -25,5 +24,3 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
-
-// {errorsMessages: [{mesage:...}]}
