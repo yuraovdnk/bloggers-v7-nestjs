@@ -34,7 +34,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    if (exception instanceof InternalServerErrorException && process.env.environment !== 'production') {
+    if (
+      exception instanceof InternalServerErrorException &&
+      process.env.environment !== 'production'
+    ) {
       const errors: any = exception.getResponse();
       response.status(status).json(errors);
     }
