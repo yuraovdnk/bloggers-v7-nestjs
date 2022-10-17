@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
-import { UserInfo } from '../types/posts.types';
 
 @Injectable()
 export class PostsRepository {

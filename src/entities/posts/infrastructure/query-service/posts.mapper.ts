@@ -1,6 +1,6 @@
 import { Post } from '../../schemas/post.schema';
 import mongoose from 'mongoose';
-import { AggregatedPostType } from '../../types/posts.types';
+import { AggregatedPostType, PostViewType } from '../../types/posts.types';
 import { PaginatedItems } from '../../../../types/global-types';
 
 export class PostsMapper {

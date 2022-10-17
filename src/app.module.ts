@@ -46,6 +46,7 @@ import { LikeCommentHandler } from './entities/comments/application/use-cases/li
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersQueryRepository } from './entities/users/infrastructure/users.query.repository';
+import { Connection } from 'mongoose';
 const useCases = [LikePostHandler, LikeCommentHandler];
 @Module({
   imports: [

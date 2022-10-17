@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
 
-export type UserInfo = {
-  userId: mongoose.Types.ObjectId;
-  userLogin: string;
-};
-
 export type AggregatedPostType = {
   _id: mongoose.Types.ObjectId;
   title: string;
@@ -25,5 +20,20 @@ export type AggregatedPostType = {
     ];
     countLikes: number;
     countDislikes: number;
+  };
+};
+export type PostViewType = {
+  id: mongoose.Types.ObjectId;
+  title: string;
+  shortDescription: string;
+  content: string;
+  bloggerId: mongoose.Types.ObjectId;
+  bloggerName: string;
+  addedAt: Date;
+  extendedLikesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+    myStatus: string;
+    newestLikes: [];
   };
 };
