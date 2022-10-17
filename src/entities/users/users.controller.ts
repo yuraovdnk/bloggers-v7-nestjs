@@ -23,7 +23,8 @@ export class UsersController {
   @Post()
   @UseGuards(BasicAuthGuard)
   async addUser(@Body() createUserDto: RegistrationDto) {
-    await this.usersService.addUser(createUserDto);
+    const createdUserId = await this.usersService.addUser(createUserDto);
+    return this.userQueryRepository.getUserById(createdUserId);
   }
 
   @Delete(':id')
