@@ -21,6 +21,6 @@ async function bootstrap() {
   let app = await NestFactory.create(AppModule);
   app = await createApp(app);
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
