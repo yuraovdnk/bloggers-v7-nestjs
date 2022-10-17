@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../schemas/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { QueryParamsType } from '../../../types/global-types';
 import { paginator } from '../../../utils/paginator.helper';
@@ -17,5 +17,9 @@ export class UsersQueryRepository {
       .limit(queryParams.pageSize);
     const users = paginator<User>(items, queryParams);
     return UsersMapper.mapPaginatedUsers(users);
+  }
+  async getUserById(userId: mongoose.Types.ObjectId) {
+    const user = await this.userModel.findOne({ _id: userId });
+    return UsersMapper.mapUser(user);
   }
 }

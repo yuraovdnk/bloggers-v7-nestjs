@@ -9,8 +9,9 @@ import { paginator } from '../../../utils/paginator.helper';
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-  async registerUser(newUser) {
-    return await this.userModel.create(newUser);
+  async registerUser(newUser): Promise<mongoose.Types.ObjectId> {
+    const userId = await this.userModel.create(newUser);
+    return userId._id;
   }
 
   async deleteUser(id: mongoose.Types.ObjectId): Promise<boolean> {

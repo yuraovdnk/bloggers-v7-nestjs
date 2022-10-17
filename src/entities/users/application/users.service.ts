@@ -17,7 +17,7 @@ import { mapErrors } from '../../../exceptions/mapErrors';
 export class UsersService {
   constructor(protected usersRepository: UsersRepository) {}
 
-  async addUser(createUserDto: RegistrationDto) {
+  async addUser(createUserDto: RegistrationDto): Promise<mongoose.Types.ObjectId> {
     const existUser = await this.usersRepository.findByLoginOrEmail(
       createUserDto.login,
       createUserDto.email,
