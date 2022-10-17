@@ -46,7 +46,7 @@ export class AuthController {
   @HttpCode(200)
   async refreshToken(@Res() res: Response, @CurrentUser() userId: mongoose.Types.ObjectId) {
     const tokens = await this.authService.generateTokens(userId);
-    res.cookie('refreshToken', tokens.refreshToken);
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true });
     res.status(200).send({ accessToken: tokens.accessToken });
   }
 
