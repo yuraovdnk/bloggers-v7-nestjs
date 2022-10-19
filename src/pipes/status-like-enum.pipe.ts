@@ -7,6 +7,6 @@ export class ParseStatusLikeEnumPipe implements PipeTransform {
     if (value && Object.values(StatusesLike).includes(value)) {
       return value;
     }
-    throw new BadRequestException(mapErrors('Some error', 'Like status'));
+    throw new BadRequestException(mapErrors('Some error', 'likeStatus'));
   }
 }
