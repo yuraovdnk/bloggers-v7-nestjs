@@ -17,10 +17,10 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../decorators/current-user.decorator';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommandBus } from '@nestjs/cqrs';
-import { SetLikeDto } from './dto/set-like.dto';
 import { LikeCommentCommand } from './application/use-cases/like-comment.command';
 import { JwtExtractGuard } from '../auth/guards/jwt-extract.guard';
 import { CommentViewType } from './types/comments.types';
+import { ParseStatusLikeEnumPipe } from '../../pipes/status-like-enum.pipe';
 
 @Controller('comments')
 export class CommentsController {
@@ -68,8 +68,8 @@ export class CommentsController {
   async setLikeStatus(
     @Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId,
     @CurrentUser() userId: mongoose.Types.ObjectId,
-    @Body() likeDto: SetLikeDto,
+    @Body('likeStatus', ParseStatusLikeEnumPipe) likeStatus: string,
   ): Promise<boolean> {
-    return this.commandBus.execute(new LikeCommentCommand(userId, commentId, likeDto.likeStatus));
+    return this.commandBus.execute(new LikeCommentCommand(userId, commentId, likeStatus));
   }
 }

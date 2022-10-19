@@ -7,7 +7,6 @@ import {
   HttpCode,
   NotFoundException,
   Param,
-  ParseEnumPipe,
   Post,
   Put,
   Query,
