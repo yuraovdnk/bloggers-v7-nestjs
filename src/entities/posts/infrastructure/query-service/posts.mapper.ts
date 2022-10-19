@@ -22,7 +22,7 @@ export class PostsMapper {
       shortDescription: post.shortDescription,
       content: post.content,
       bloggerId: post.bloggerId._id,
-      // bloggerName: post.bloggerId.name,
+      bloggerName: post.bloggerName,
       addedAt: post.addedAt,
       extendedLikesInfo: this.mapLikes(post.likesInfo, userId),
     };
@@ -44,4 +44,5 @@ export class PostsMapper {
       }),
     };
   }
+  private static calcLikes(likes: []) {}
 }

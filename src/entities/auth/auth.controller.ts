@@ -17,23 +17,23 @@ export class AuthController {
   @Post('registration')
   @HttpCode(204)
   async registration(@Body() registrationDto: RegistrationDto) {
-    await this.authService.signUp(registrationDto);
+    return this.authService.signUp(registrationDto);
   }
 
   @Post('registration-confirmation')
   @HttpCode(204)
   async registrationConfirm(@Body('code') confirmCode: string) {
-    await this.authService.confirmEmail(confirmCode);
+    return this.authService.confirmEmail(confirmCode);
   }
 
   @Post('registration-email-resending')
   @HttpCode(204)
   async emailResending(@Body('email') email: string) {
-    await this.authService.resendEmail(email);
+    return this.authService.resendEmail(email);
   }
 
-  @Post('login')
   @UseGuards(LocalAuthGuard)
+  @Post('login')
   @HttpCode(200)
   async login(@Res() res: Response, @CurrentUser() userId: mongoose.Types.ObjectId) {
     const tokens = await this.authService.generateTokens(userId);
@@ -41,8 +41,8 @@ export class AuthController {
     res.status(200).send({ accessToken: tokens.accessToken });
   }
 
-  @Post('refresh-token')
   @UseGuards(JwtRefreshAuthGuard)
+  @Post('refresh-token')
   @HttpCode(200)
   async refreshToken(@Res() res: Response, @CurrentUser() userId: mongoose.Types.ObjectId) {
     const tokens = await this.authService.generateTokens(userId);
@@ -50,11 +50,16 @@ export class AuthController {
     res.status(200).send({ accessToken: tokens.accessToken });
   }
 
-  @Post('logout')
   @UseGuards(JwtRevokedAuthGuard)
+  @Post('logout')
   @HttpCode(204)
-  async logout(@Cookies('refreshToken') refreshToken: string) {
-    await this.authService.signOut(refreshToken);
+  async logout(@Res() res: Response, @Cookies('refreshToken') refreshToken: string) {
+    const result = await this.authService.signOut(refreshToken);
+    if (result) {
+      res.clearCookie('refreshToken');
+      return res.sendStatus(204);
+    }
+    res.sendStatus(401);
   }
 
   @Get('me')

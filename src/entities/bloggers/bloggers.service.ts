@@ -66,6 +66,7 @@ export class BloggersService {
       shortDescription: createPostDto.shortDescription,
       content: createPostDto.content,
       bloggerId,
+      bloggerName: blogger.name,
     };
     return await this.postsRepository.createPost(newPost);
   }

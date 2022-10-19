@@ -6,6 +6,7 @@ export type AggregatedPostType = {
   shortDescription: string;
   content: string;
   bloggerId: mongoose.Types.ObjectId;
+  bloggerName: string;
   addedAt: Date;
   likesInfo: {
     likes: [

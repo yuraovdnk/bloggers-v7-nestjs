@@ -1,4 +1,4 @@
-import { AggregatedCommentType } from '../../types/comments.types';
+import { AggregatedCommentType, CommentViewType } from '../../types/comments.types';
 import mongoose from 'mongoose';
 import { PaginatedItems } from '../../../../types/global-types';
 
@@ -6,14 +6,17 @@ export class CommentMapper {
   static mapPaginatedComments(
     paginatedComments: PaginatedItems<AggregatedCommentType>,
     userId: mongoose.Types.ObjectId,
-  ) {
+  ): PaginatedItems<CommentViewType> {
     const items = paginatedComments.items.map((item) => this.mapComment(item, userId));
     return {
       ...paginatedComments,
       items,
     };
   }
-  static mapComment(comment: AggregatedCommentType, userId: mongoose.Types.ObjectId) {
+  static mapComment(
+    comment: AggregatedCommentType,
+    userId: mongoose.Types.ObjectId,
+  ): CommentViewType {
     if (!comment) return null;
     return {
       id: comment._id,

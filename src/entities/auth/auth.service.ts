@@ -51,11 +51,12 @@ export class AuthService {
         isConfirmed: false,
       },
     };
-    const createdUser = await this.usersRepository.registerUser(newUser);
+    const createdUserId = await this.usersRepository.registerUser(newUser);
+    const user = await this.usersRepository.findById(createdUserId);
     try {
-      await this.emailManager.sendConfirmMail(createdUser);
+      await this.emailManager.sendConfirmMail(user);
     } catch (e) {
-      await this.usersRepository.deleteUser(createdUser._id);
+      await this.usersRepository.deleteUser(createdUserId);
       throw new InternalServerErrorException();
     }
     return true;
@@ -140,6 +141,6 @@ export class AuthService {
   }
 
   async signOut(refreshToken: string) {
-    return await this.tokenService.deleteToken(refreshToken);
+    return this.tokenService.deleteToken(refreshToken);
   }
 }

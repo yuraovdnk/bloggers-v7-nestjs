@@ -7,33 +7,21 @@ export type CommentInputType = {
   userLogin: string;
   addedAt: Date;
 };
-// export type CommentSchemaType = {
-//   _id: mongoose.Types.ObjectId;
-//   content: string;
-//   userId: mongoose.Types.ObjectId;
-//   postId: mongoose.Types.ObjectId;
-//   userLogin: string;
-//   addedAt: Date;
-//   likesInfo: {
-//     likes: [];
-//     countLikes: number;
-//     countDislikes: number;
-//   };
-// };
-// export type CommentViewType = {
-//   id: mongoose.Types.ObjectId;
-//   content: string;
-//   userId: mongoose.Types.ObjectId;
-//   userLogin: string;
-//   addedAt: Date;
-//   likesInfo: {
-//     likesCount: number;
-//     dislikesCount: number;
-//     myStatus: string;
-//   };
-// };
+
+export type CommentViewType = {
+  id: mongoose.Types.ObjectId;
+  content: string;
+  userId: mongoose.Types.ObjectId;
+  userLogin: string;
+  addedAt: Date;
+  likesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+    myStatus: string;
+  };
+};
 export type AggregatedCommentType = {
-  _id: string;
+  _id: mongoose.Types.ObjectId;
   posId: mongoose.Types.ObjectId;
   content: string;
   userId: mongoose.Types.ObjectId;

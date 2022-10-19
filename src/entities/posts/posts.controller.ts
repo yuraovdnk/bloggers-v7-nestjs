@@ -19,7 +19,7 @@ import mongoose from 'mongoose';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../decorators/current-user.decorator';
-import { QueryParamsType } from '../../types/global-types';
+import { PaginatedItems, QueryParamsType } from '../../types/global-types';
 import { QueryParamsPipe } from '../../pipes/query-params.pipe';
 import { PostsQueryRepository } from './infrastructure/posts.query.repository';
 import { CommentsService } from '../comments/application/comments.service';
@@ -28,6 +28,8 @@ import { CommandBus } from '@nestjs/cqrs';
 import { LikePostCommand } from './application/use-cases/like-post.command';
 import { SkipThrottle } from '@nestjs/throttler';
 import { ParseStatusLikeEnumPipe } from '../../pipes/status-like-enum.pipe';
+import { PostViewType } from './types/posts.types';
+import { CommentViewType } from '../comments/types/comments.types';
 
 @SkipThrottle()
 @Controller('posts')
@@ -42,18 +44,22 @@ export class PostsController {
 
   @Post()
   @HttpCode(201)
-  async createPost(@Body() createPost: CreatePostDto) {
+  async createPost(@Body() createPost: CreatePostDto): Promise<PostViewType> {
     const createdPostId = await this.postsService.createPost(createPost);
     return this.postsQueryRepository.getPostById(createdPostId);
   }
 
   @Get()
-  async getPosts(@Query(QueryParamsPipe) queryParams: QueryParamsType) {
+  async getPosts(
+    @Query(QueryParamsPipe) queryParams: QueryParamsType,
+  ): Promise<PaginatedItems<PostViewType>> {
     return await this.postsQueryRepository.getPosts(queryParams);
   }
 
   @Get(':postId')
-  async getPostById(@Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId) {
+  async getPostById(
+    @Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId,
+  ): Promise<PostViewType> {
     const post = await this.postsQueryRepository.getPostById(postId);
     if (!post) throw new NotFoundException();
     return post;
@@ -64,14 +70,16 @@ export class PostsController {
   async updatePost(
     @Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId,
     @Body() updatePostDto: CreatePostDto,
-  ) {
-    await this.postsService.updatePost(postId, updatePostDto);
+  ): Promise<boolean> {
+    return this.postsService.updatePost(postId, updatePostDto);
   }
 
   @Delete(':postId')
   @HttpCode(204)
-  async deletePost(@Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId) {
-    await this.postsService.deletePost(postId);
+  async deletePost(
+    @Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId,
+  ): Promise<boolean> {
+    return this.postsService.deletePost(postId);
   }
 
   @Post(':postId/comments')
@@ -93,8 +101,8 @@ export class PostsController {
   async getCommentsForPost(
     @Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId,
     @Query(QueryParamsPipe) queryParams: QueryParamsType,
-  ) {
-    return await this.commentsQueryRepository.getCommentsByPostId(postId, queryParams);
+  ): Promise<PaginatedItems<CommentViewType>> {
+    return this.commentsQueryRepository.getCommentsByPostId(postId, queryParams);
   }
 
   @Put(':postId/like-status')

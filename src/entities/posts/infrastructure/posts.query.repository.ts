@@ -2,16 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Post } from '../schemas/post.schema';
-import { QueryParamsType } from '../../../types/global-types';
+import { PaginatedItems, QueryParamsType } from '../../../types/global-types';
 import { paginator } from '../../../utils/paginator.helper';
 import { PostsMapper } from './query-service/posts.mapper';
-import { AggregatedPostType } from '../types/posts.types';
+import { AggregatedPostType, PostViewType } from '../types/posts.types';
 
 @Injectable()
 export class PostsQueryRepository {
   constructor(@InjectModel(Post.name) private postsModel: Model<Post>) {}
 
-  async getPosts(queryParams: QueryParamsType, userId?: mongoose.Types.ObjectId) {
+  async getPosts(
+    queryParams: QueryParamsType,
+    userId?: mongoose.Types.ObjectId,
+  ): Promise<PaginatedItems<PostViewType>> {
     const posts: AggregatedPostType[] = await this.postsModel.aggregate([
       { $addFields: { _id: '$_id' } },
       {
@@ -68,7 +71,7 @@ export class PostsQueryRepository {
     bloggerId: mongoose.Types.ObjectId,
     queryParams: QueryParamsType,
     userId?: mongoose.Types.ObjectId,
-  ) {
+  ): Promise<PaginatedItems<PostViewType>> {
     const posts: AggregatedPostType[] = await this.postsModel.aggregate([
       { $match: { bloggerId } },
       { $addFields: { _id: '$_id' } },
@@ -122,7 +125,10 @@ export class PostsQueryRepository {
     return PostsMapper.mapPaginatedPosts(paginatedItems, userId);
   }
 
-  async getPostById(postId: mongoose.Types.ObjectId, userId?: mongoose.Types.ObjectId) {
+  async getPostById(
+    postId: mongoose.Types.ObjectId,
+    userId?: mongoose.Types.ObjectId,
+  ): Promise<PostViewType> {
     const post = await this.postsModel.aggregate([
       { $match: { _id: postId } },
       { $addFields: { _id: '$_id' } },
@@ -170,7 +176,6 @@ export class PostsQueryRepository {
         },
       },
     ]);
-
     return PostsMapper.mapPost(post[0], userId);
   }
 }

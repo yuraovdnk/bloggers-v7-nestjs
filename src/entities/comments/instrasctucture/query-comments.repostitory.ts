@@ -3,10 +3,10 @@ import mongoose, { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { Comment } from '../schemas/comment.schema';
 
-import { QueryParamsType } from '../../../types/global-types';
+import { PaginatedItems, QueryParamsType } from '../../../types/global-types';
 import { CommentMapper } from './query-service/comment.mapper';
 import { paginator } from '../../../utils/paginator.helper';
-import { AggregatedCommentType } from '../types/comments.types';
+import { AggregatedCommentType, CommentViewType } from '../types/comments.types';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -52,7 +52,7 @@ export class CommentsQueryRepository {
     postId: mongoose.Types.ObjectId,
     queryParams: QueryParamsType,
     userId?: mongoose.Types.ObjectId,
-  ) {
+  ): Promise<PaginatedItems<CommentViewType>> {
     const comments = await this.commentModel.aggregate([
       { $match: { postId } },
       { $addFields: { _id: '$_id' } },
