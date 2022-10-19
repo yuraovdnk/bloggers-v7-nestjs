@@ -12,7 +12,10 @@ import { AggregatedCommentType, CommentViewType } from '../types/comments.types'
 export class CommentsQueryRepository {
   constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>) {}
 
-  async getCommentById(commentId: mongoose.Types.ObjectId, userId?: mongoose.Types.ObjectId) {
+  async getCommentById(
+    commentId: mongoose.Types.ObjectId,
+    userId?: mongoose.Types.ObjectId,
+  ): Promise<CommentViewType> {
     const comments = await this.commentModel.aggregate([
       { $match: { _id: commentId } },
       { $addFields: { _id: '$_id' } },

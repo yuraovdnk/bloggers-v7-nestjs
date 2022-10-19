@@ -1,6 +1,7 @@
 import { AggregatedCommentType, CommentViewType } from '../../types/comments.types';
 import mongoose from 'mongoose';
 import { PaginatedItems } from '../../../../types/global-types';
+import { CommentLikesService } from './comment-likes.service';
 
 export class CommentMapper {
   static mapPaginatedComments(
@@ -24,17 +25,7 @@ export class CommentMapper {
       userId: comment.userId,
       userLogin: comment.userLogin,
       addedAt: comment.addedAt,
-      likesInfo: this.mapLikes(comment.likesInfo, userId),
-    };
-  }
-  private static mapLikes(likesInfo, userId: mongoose.Types.ObjectId) {
-    const myStatus = likesInfo.likes.find(
-      (item) => userId && item.userId.toString() === userId.toString(),
-    );
-    return {
-      likesCount: likesInfo.countLikes,
-      dislikesCount: likesInfo.countDislikes,
-      myStatus: myStatus?.likeStatus ?? 'None',
+      likesInfo: CommentLikesService.getLikesInfo(comment.likesInfo, userId),
     };
   }
 }

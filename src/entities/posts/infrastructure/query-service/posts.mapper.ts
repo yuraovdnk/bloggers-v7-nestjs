@@ -1,7 +1,7 @@
-import { Post } from '../../schemas/post.schema';
 import mongoose from 'mongoose';
-import { AggregatedPostType, PostViewType } from '../../types/posts.types';
+import { AggregatedPostType } from '../../types/posts.types';
 import { PaginatedItems } from '../../../../types/global-types';
+import { PostLikesService } from './post-likes.service';
 
 export class PostsMapper {
   static mapPaginatedPosts(
@@ -24,25 +24,7 @@ export class PostsMapper {
       bloggerId: post.bloggerId._id,
       bloggerName: post.bloggerName,
       addedAt: post.addedAt,
-      extendedLikesInfo: this.mapLikes(post.likesInfo, userId),
+      extendedLikesInfo: PostLikesService.getLikesInfo(post.likesInfo, userId),
     };
   }
-  private static mapLikes(likesInfo, userId: mongoose.Types.ObjectId) {
-    const myStatus = likesInfo.likes.find(
-      (item) => userId && item.userId._id.toString() === userId.toString(),
-    );
-    return {
-      likesCount: likesInfo.countLikes,
-      dislikesCount: likesInfo.countDislikes,
-      myStatus: myStatus?.likeStatus ?? 'None',
-      newestLikes: likesInfo.likes.map((item) => {
-        return {
-          userId: item.userId,
-          login: item.userLogin,
-          addedAt: item.addedAt,
-        };
-      }),
-    };
-  }
-  private static calcLikes(likes: []) {}
 }

@@ -23,6 +23,8 @@ import { PostsQueryRepository } from '../posts/infrastructure/posts.query.reposi
 import { BloggerViewType } from './types/blogger-types';
 import { SkipThrottle } from '@nestjs/throttler';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
+import { JwtExtractGuard } from '../auth/guards/jwt-extract.guard';
+import { CurrentUser } from '../../decorators/current-user.decorator';
 
 @SkipThrottle()
 @Controller('bloggers')
@@ -79,13 +81,15 @@ export class BloggersController {
   }
 
   @Get(':bloggerId/posts')
+  @UseGuards(JwtExtractGuard)
   async getPostsByBloggerId(
     @Param('bloggerId', ParseObjectIdPipe) bloggerId: mongoose.Types.ObjectId,
     @Query(QueryParamsPipe) queryParams: QueryParamsType,
+    @CurrentUser() userId: mongoose.Types.ObjectId,
   ) {
     //TODO optimize query for get Blogger
     const blogger = await this.bloggersQueryRepository.getBloggerById(bloggerId);
     if (!blogger) throw new NotFoundException();
-    return this.postsQueryRepository.getPostsByBloggerId(bloggerId, queryParams);
+    return this.postsQueryRepository.getPostsByBloggerId(bloggerId, queryParams, userId);
   }
 }

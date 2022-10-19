@@ -30,6 +30,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { ParseStatusLikeEnumPipe } from '../../pipes/status-like-enum.pipe';
 import { PostViewType } from './types/posts.types';
 import { CommentViewType } from '../comments/types/comments.types';
+import { JwtExtractGuard } from '../auth/guards/jwt-extract.guard';
 
 @SkipThrottle()
 @Controller('posts')
@@ -50,17 +51,21 @@ export class PostsController {
   }
 
   @Get()
+  @UseGuards(JwtExtractGuard)
   async getPosts(
     @Query(QueryParamsPipe) queryParams: QueryParamsType,
-  ): Promise<PaginatedItems<PostViewType>> {
-    return await this.postsQueryRepository.getPosts(queryParams);
+    @CurrentUser() userId: mongoose.Types.ObjectId,
+  ) {
+    return await this.postsQueryRepository.getPosts(queryParams, userId);
   }
 
   @Get(':postId')
+  @UseGuards(JwtExtractGuard)
   async getPostById(
     @Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId,
+    @CurrentUser() userId: mongoose.Types.ObjectId,
   ): Promise<PostViewType> {
-    const post = await this.postsQueryRepository.getPostById(postId);
+    const post = await this.postsQueryRepository.getPostById(postId, userId);
     if (!post) throw new NotFoundException();
     return post;
   }
@@ -97,12 +102,14 @@ export class PostsController {
     return this.commentsQueryRepository.getCommentById(newCommentId, userId);
   }
 
+  @UseGuards(JwtExtractGuard)
   @Get(':postId/comments')
   async getCommentsForPost(
     @Param('postId', ParseObjectIdPipe) postId: mongoose.Types.ObjectId,
     @Query(QueryParamsPipe) queryParams: QueryParamsType,
+    @CurrentUser() userId: mongoose.Types.ObjectId,
   ): Promise<PaginatedItems<CommentViewType>> {
-    return this.commentsQueryRepository.getCommentsByPostId(postId, queryParams);
+    return this.commentsQueryRepository.getCommentsByPostId(postId, queryParams, userId);
   }
 
   @Put(':postId/like-status')

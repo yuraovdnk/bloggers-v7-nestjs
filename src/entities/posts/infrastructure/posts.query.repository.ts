@@ -45,24 +45,10 @@ export class PostsQueryRepository {
           },
         },
       },
-      {
-        $addFields: {
-          'likesInfo.likes': {
-            $slice: [
-              {
-                $filter: {
-                  input: '$likesInfo.likes',
-                  cond: { $eq: ['$$this.likeStatus', 'Like'] },
-                },
-              },
-              3,
-            ],
-          },
-        },
-      },
       { $skip: queryParams.skip },
       { $limit: queryParams.pageSize },
     ]);
+
     const paginatedItems = paginator<AggregatedPostType>(posts, queryParams);
     return PostsMapper.mapPaginatedPosts(paginatedItems, userId);
   }
@@ -100,21 +86,6 @@ export class PostsQueryRepository {
                 cond: { $eq: ['$$this.likeStatus', 'Dislike'] },
               },
             },
-          },
-        },
-      },
-      {
-        $addFields: {
-          'likesInfo.likes': {
-            $slice: [
-              {
-                $filter: {
-                  input: '$likesInfo.likes',
-                  cond: { $eq: ['$$this.likeStatus', 'Like'] },
-                },
-              },
-              3,
-            ],
           },
         },
       },
@@ -160,22 +131,8 @@ export class PostsQueryRepository {
           },
         },
       },
-      {
-        $addFields: {
-          'likesInfo.likes': {
-            $slice: [
-              {
-                $filter: {
-                  input: '$likesInfo.likes',
-                  cond: { $eq: ['$$this.likeStatus', 'Like'] },
-                },
-              },
-              3,
-            ],
-          },
-        },
-      },
     ]);
+
     return PostsMapper.mapPost(post[0], userId);
   }
 }

@@ -16,10 +16,11 @@ import { CommentsQueryRepository } from './instrasctucture/query-comments.repost
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../decorators/current-user.decorator';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { LikePostCommand } from '../posts/application/use-cases/like-post.command';
 import { CommandBus } from '@nestjs/cqrs';
 import { SetLikeDto } from './dto/set-like.dto';
 import { LikeCommentCommand } from './application/use-cases/like-comment.command';
+import { JwtExtractGuard } from '../auth/guards/jwt-extract.guard';
+import { CommentViewType } from './types/comments.types';
 
 @Controller('comments')
 export class CommentsController {
@@ -28,10 +29,14 @@ export class CommentsController {
     private commentsQueryRepository: CommentsQueryRepository,
     private commandBus: CommandBus,
   ) {}
-  //TODO typing methods
+
   @Get(':commentId')
-  async getCommentById(@Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId) {
-    const comment = await this.commentsQueryRepository.getCommentById(commentId);
+  @UseGuards(JwtExtractGuard)
+  async getCommentById(
+    @Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId,
+    @CurrentUser() userId: mongoose.Types.ObjectId,
+  ): Promise<CommentViewType> {
+    const comment = await this.commentsQueryRepository.getCommentById(commentId, userId);
     if (!comment) throw new NotFoundException();
     return comment;
   }
@@ -43,7 +48,7 @@ export class CommentsController {
     @Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId,
     @Body() updateCommentDto: UpdateCommentDto,
     @CurrentUser() userId: mongoose.Types.ObjectId,
-  ) {
+  ): Promise<boolean> {
     return this.commentsService.updateComment(userId, commentId, updateCommentDto.content);
   }
 
@@ -53,7 +58,7 @@ export class CommentsController {
   async deleteComment(
     @Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId,
     @CurrentUser() userId: mongoose.Types.ObjectId,
-  ) {
+  ): Promise<boolean> {
     return this.commentsService.deleteComment(userId, commentId);
   }
 
@@ -64,7 +69,7 @@ export class CommentsController {
     @Param('commentId', ParseObjectIdPipe) commentId: mongoose.Types.ObjectId,
     @CurrentUser() userId: mongoose.Types.ObjectId,
     @Body() likeDto: SetLikeDto,
-  ) {
+  ): Promise<boolean> {
     return this.commandBus.execute(new LikeCommentCommand(userId, commentId, likeDto.likeStatus));
   }
 }
